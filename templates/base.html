@@ -9,6 +9,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
   <script>
+    window.addEventListener('load', function() {
+      var loader = document.getElementById('globalLoader');
+      if (loader) {
+        loader.classList.add('loaded');
+        loader.setAttribute('aria-hidden', 'true');
+      }
+    });
     document.addEventListener('DOMContentLoaded', function() {
       document.querySelectorAll('.nav a[href]').forEach(function(a) {
         a.addEventListener('click', function() {
@@ -19,6 +26,10 @@
   </script>
 </head>
 <body>
+  <div class="global-loader" id="globalLoader" aria-hidden="false">
+    <div class="loader-spinner"></div>
+    <p class="loader-text">Please wait</p>
+  </div>
   <header class="site-header">
     <div class="header-inner">
       <a href="{{ url_for('index') }}" class="logo">
