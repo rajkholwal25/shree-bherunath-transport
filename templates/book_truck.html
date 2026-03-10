@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Book Truck — {{ truck.model }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Book this truck</h1>
+  <p class="page-subtitle">Request will be <span class="status status-pending">pending</span> until admin approves.</p>
+</div>
+
+<div class="bookings-section">
+  <div class="truck-card" style="max-width:760px; margin:0 auto;">
+    <div class="truck-image">
+      {% if truck.image_url %}
+        <img src="{{ truck.image_url }}" alt="{{ truck.model }}">
+      {% else %}
+        <img src="{{ url_for('static', filename='images/truck-2.svg') }}" alt="Truck">
+      {% endif %}
+    </div>
+    <div class="truck-body">
+      <div class="truck-title">{{ truck.model }}</div>
+      <div class="truck-details">
+        <span>Truck No: <strong>{{ truck.truck_number }}</strong></span>
+        <span>Model: {{ truck.model }}</span>
+        <span>Capacity: {{ truck.capacity }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="max-width:760px; margin:0 auto;">
+    <h2>Booking details</h2>
+    <form method="post" action="{{ url_for('book_truck', truck_id=truck.id) }}" class="form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="pickup">Pickup location</label>
+          <input id="pickup" name="pickup_location" required placeholder="e.g. Jaipur">
+        </div>
+        <div class="form-group">
+          <label for="drop">Drop location</label>
+          <input id="drop" name="drop_location" required placeholder="e.g. Delhi">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="price">Price (₹)</label>
+        <input type="number" id="price" name="price" required min="0" step="0.01" placeholder="12000">
+      </div>
+      <button class="btn btn-primary" type="submit">Send booking request</button>
+      <a class="btn btn-ghost" href="{{ url_for('trucks_page') }}">Back to trucks</a>
+    </form>
+  </div>
+</div>
+{% endblock %}
+

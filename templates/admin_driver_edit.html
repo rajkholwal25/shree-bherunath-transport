@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Admin — Edit Driver{% endblock %}
+{% block content %}
+<div class="page-card">
+  <h1 class="page-title">Edit driver</h1>
+  <p class="page-subtitle">Update driver details.</p>
+  <form method="post" action="{{ url_for('admin_driver_edit', driver_id=driver.id) }}" class="form">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input id="name" name="name" required value="{{ driver.name }}">
+    </div>
+    <div class="form-group">
+      <label for="phone">Phone</label>
+      <input id="phone" name="phone" required value="{{ driver.phone }}">
+    </div>
+    <div class="form-group">
+      <label for="license_number">License number</label>
+      <input id="license_number" name="license_number" required value="{{ driver.license_number }}">
+    </div>
+    <div class="form-group">
+      <label for="experience">Experience</label>
+      <input id="experience" name="experience" value="{{ driver.experience or '' }}">
+    </div>
+    <button class="btn btn-primary btn-block" type="submit">Save changes</button>
+    <a class="btn btn-ghost btn-block" href="{{ url_for('admin_drivers') }}" style="text-align:center;">Back</a>
+  </form>
+</div>
+{% endblock %}
+

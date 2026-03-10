@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Admin — Drivers{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Drivers</h1>
+  <p class="page-subtitle">Add, edit, or delete drivers (updates `drivers` table).</p>
+</div>
+
+<div class="bookings-section">
+  <div class="card">
+    <h2>Add driver</h2>
+    <form method="post" action="{{ url_for('admin_drivers') }}" class="form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input id="name" name="name" required placeholder="Driver name">
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone</label>
+          <input id="phone" name="phone" required placeholder="6280072125">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="license_number">License number</label>
+          <input id="license_number" name="license_number" required placeholder="RJ14-XXXX-XXXX">
+        </div>
+        <div class="form-group">
+          <label for="experience">Experience</label>
+          <input id="experience" name="experience" placeholder="e.g. 3 years">
+        </div>
+      </div>
+      <button class="btn btn-primary" type="submit">Add driver</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>All drivers</h2>
+    {% if drivers %}
+      <ul class="booking-list">
+        {% for d in drivers %}
+        <li class="booking-item" style="align-items:flex-start;">
+          <div>
+            <div class="booking-route">{{ d.name }}</div>
+            <div class="booking-meta">{{ d.phone }} · {{ d.license_number }} · {{ d.experience or '—' }}</div>
+            <div class="booking-meta">Driver ID: <code>{{ d.id }}</code></div>
+          </div>
+          <div class="action-row">
+            <a class="btn btn-ghost btn-sm" href="{{ url_for('admin_driver_edit', driver_id=d.id) }}">Edit</a>
+            <form method="post" action="{{ url_for('admin_driver_delete', driver_id=d.id) }}">
+              <button class="btn btn-ghost btn-sm" type="submit">Delete</button>
+            </form>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="empty-state">No drivers added yet.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+

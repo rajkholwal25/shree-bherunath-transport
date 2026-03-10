@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Admin — Trucks{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Trucks</h1>
+  <p class="page-subtitle">Add, edit, or delete trucks. Customers will see these trucks as cards.</p>
+</div>
+
+<div class="bookings-section">
+  <div class="card">
+    <h2>Add truck</h2>
+    <form method="post" action="{{ url_for('admin_trucks') }}" class="form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="truck_number">Truck number</label>
+          <input id="truck_number" name="truck_number" required placeholder="RJ14AB1234">
+        </div>
+        <div class="form-group">
+          <label for="model">Model</label>
+          <input id="model" name="model" required placeholder="Tata 407">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="capacity">Capacity</label>
+          <input id="capacity" name="capacity" required placeholder="5 ton">
+        </div>
+        <div class="form-group">
+          <label for="driver_id">Driver ID (optional)</label>
+          <input id="driver_id" name="driver_id" placeholder="uuid">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="image_url">Image URL (optional)</label>
+        <input id="image_url" name="image_url" placeholder="https://...jpg">
+        <p class="form-note">Tip: paste any public image link. If empty, we show a default truck image.</p>
+      </div>
+      <button class="btn btn-primary" type="submit">Add truck</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>All trucks</h2>
+    {% if trucks %}
+      <div class="truck-grid">
+        {% for t in trucks %}
+          <div class="truck-card">
+            <div class="truck-image">
+              {% if t.image_url %}
+                <img src="{{ t.image_url }}" alt="{{ t.model }}">
+              {% else %}
+                <img src="{{ url_for('static', filename='images/truck-2.svg') }}" alt="Truck">
+              {% endif %}
+            </div>
+            <div class="truck-body">
+              <div class="truck-title">{{ t.truck_number }} • {{ t.model }}</div>
+              <div class="truck-meta">{{ t.capacity }} {% if t.driver_id %}· Driver: <code>{{ t.driver_id }}</code>{% endif %}</div>
+              <div class="truck-actions">
+                <a class="btn btn-ghost btn-sm" href="{{ url_for('admin_truck_edit', truck_id=t.id) }}">Edit</a>
+                <form method="post" action="{{ url_for('admin_truck_delete', truck_id=t.id) }}">
+                  <button class="btn btn-ghost btn-sm" type="submit">Delete</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="empty-state">No trucks added yet.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+

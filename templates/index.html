@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block title %}Fast & Reliable Transport Service{% endblock %}
+{% block content %}
+<div class="ui-home">
+  <section class="hero-banner">
+    <div class="hero-overlay">
+      <div class="hero-content">
+        <h1>Fast & Reliable<br>Transport Service</h1>
+        <p class="hero-sub">Direct Truck Owner • No Brokers<br>Safe Delivery Across Rajasthan</p>
+        <div class="hero-cta">
+          <a class="btn btn-accent" href="{{ url_for('trucks_page') }}">Book Truck</a>
+          <a class="btn btn-whatsapp" href="https://wa.me/916280072125" target="_blank" rel="noreferrer">WhatsApp Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="trucks">
+    <div class="section-head">
+      <h2>Available Trucks</h2>
+      <p>Choose from a variety of trucks for your transport needs.</p>
+    </div>
+    {% if trucks %}
+      <div class="truck-grid">
+        {% for t in trucks %}
+          <div class="truck-card light">
+            <div class="truck-image">
+              {% if t.image_url %}
+                <img src="{{ t.image_url }}" alt="{{ t.model }}">
+              {% else %}
+                <img src="{{ url_for('static', filename='images/truck-2.svg') }}" alt="Truck">
+              {% endif %}
+            </div>
+            <div class="truck-body">
+              <div class="truck-title">{{ t.model }}</div>
+              <div class="truck-details">
+                <span>Truck No: <strong>{{ t.truck_number }}</strong></span>
+                <span>Model: {{ t.model }}</span>
+                <span>Capacity: {{ t.capacity }}</span>
+              </div>
+              <div class="truck-actions">
+                <a class="btn btn-primary btn-sm" href="{{ url_for('book_truck', truck_id=t.id) }}">Book Truck</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="empty-state">No trucks added yet. Admin can add trucks from Admin → Trucks.</p>
+    {% endif %}
+  </section>
+
+  <section class="section" id="routes">
+    <div class="card light">
+      <div class="section-head tight">
+        <h2>Available Routes</h2>
+        <p>We offer reliable transportation across Rajasthan and Gujarat.</p>
+      </div>
+      <div class="routes-two-col">
+        {% if routes %}
+          {% for r in routes %}
+            <div class="route-card">{{ r.from_location }} → {{ r.to_location }}{% if r.hours is not none %} · {{ r.hours }} hrs{% endif %}</div>
+          {% endfor %}
+        {% else %}
+          <div class="route-card">Ahmedabad → Udaipur</div>
+          <div class="route-card">Udaipur → Bilwara</div>
+          <div class="route-card">Chittorgarh → Kishangarh</div>
+          <div class="route-card">Ajmer → Beawar</div>
+          <div class="route-card">Jaipur → Kishangarh</div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="services">
+    <div class="section-head">
+      <h2>🚛 Our Services</h2>
+      <p>Reliable transport solutions for every need.</p>
+    </div>
+    {% if services %}
+      <div class="services-grid">
+        {% for s in services %}
+          <div class="card light service-card-block">
+            <h3 class="service-card-title">{% if s.icon %}{{ s.icon }} {% endif %}{{ s.title }}</h3>
+            <p class="service-card-desc">{{ s.description or '' }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="card light service-card-block">
+        <h3 class="service-card-title">✅ Full Truck Load (FTL)</h3>
+        <p class="service-card-desc">Our Full Truck Load service is ideal for customers who need an entire truck for their goods. This option ensures faster delivery, direct transportation, and maximum safety.</p>
+      </div>
+      <div class="card light service-card-block">
+        <h3 class="service-card-title">✅ Part Load Service (LTL)</h3>
+        <p class="service-card-desc">Our Part Load service is designed for smaller shipments. You only pay for the space your goods occupy, making it cost-effective and flexible.</p>
+      </div>
+      <div class="card light service-card-block">
+        <h3 class="service-card-title">📦 Safe & Reliable Transportation</h3>
+        <p class="service-card-desc">We handle all types of goods with proper care. Safe loading, secure transit, and timely delivery.</p>
+      </div>
+    {% endif %}
+  </section>
+
+  <section class="section" id="why">
+    <div class="card light">
+      <div class="section-head tight">
+        <h2>Why Choose Us</h2>
+        <p>Here’s why we’re the best transport choice.</p>
+      </div>
+      <ul class="tick-list">
+        <li>Direct Truck Owner — No Brokers</li>
+        <li>On-time delivery</li>
+        <li>Experienced drivers</li>
+        <li>GPS tracking (upcoming)</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="feedback">
+    <div class="section-head">
+      <h2>What Our Customers Say</h2>
+      <p>Trusted by businesses across Rajasthan and Gujarat.</p>
+    </div>
+    <div class="feedback-belt-wrap">
+      <div class="feedback-belt">
+        <div class="feedback-track">
+          <div class="feedback-card"><span class="feedback-name">Ramesh Kumar</span><span class="feedback-text">Very reliable service. Goods reached on time.</span></div>
+          <div class="feedback-card"><span class="feedback-name">Priya Sharma</span><span class="feedback-text">Best transport in Rajasthan. Highly recommend.</span></div>
+          <div class="feedback-card"><span class="feedback-name">Vikram Singh</span><span class="feedback-text">Direct truck owner, no broker. Fair pricing.</span></div>
+          <div class="feedback-card"><span class="feedback-name">Anjali Patel</span><span class="feedback-text">Smooth delivery from Jaipur to Ahmedabad.</span></div>
+          <div class="feedback-card"><span class="feedback-name">Suresh Mehta</span><span class="feedback-text">Professional and on-time. Will book again.</span></div>
+          <div class="feedback-card"><span class="feedback-name">Kavita Reddy</span><span class="feedback-text">Safe handling of our cargo. Thank you!</span></div>
+          <div class="feedback-card"><span class="feedback-name">Rajesh Gupta</span><span class="feedback-text">Good trucks, experienced drivers. Satisfied.</span></div>
+          <div class="feedback-card"><span class="feedback-name">Pooja Nair</span><span class="feedback-text">Quick booking and transparent rates.</span></div>
+          <div class="feedback-card"><span class="feedback-name">Amit Joshi</span><span class="feedback-text">Used for part load. Very cost-effective.</span></div>
+          <div class="feedback-card"><span class="feedback-name">Deepak Verma</span><span class="feedback-text">Best choice for Rajasthan–Gujarat routes.</span></div>
+          <!-- duplicate for seamless loop -->
+          <div class="feedback-card"><span class="feedback-name">Ramesh Kumar</span><span class="feedback-text">Very reliable service. Goods reached on time.</span></div>
+          <div class="feedback-card"><span class="feedback-name">Priya Sharma</span><span class="feedback-text">Best transport in Rajasthan. Highly recommend.</span></div>
+          <div class="feedback-card"><span class="feedback-name">Vikram Singh</span><span class="feedback-text">Direct truck owner, no broker. Fair pricing.</span></div>
+          <div class="feedback-card"><span class="feedback-name">Anjali Patel</span><span class="feedback-text">Smooth delivery from Jaipur to Ahmedabad.</span></div>
+          <div class="feedback-card"><span class="feedback-name">Suresh Mehta</span><span class="feedback-text">Professional and on-time. Will book again.</span></div>
+          <div class="feedback-card"><span class="feedback-name">Kavita Reddy</span><span class="feedback-text">Safe handling of our cargo. Thank you!</span></div>
+          <div class="feedback-card"><span class="feedback-name">Rajesh Gupta</span><span class="feedback-text">Good trucks, experienced drivers. Satisfied.</span></div>
+          <div class="feedback-card"><span class="feedback-name">Pooja Nair</span><span class="feedback-text">Quick booking and transparent rates.</span></div>
+          <div class="feedback-card"><span class="feedback-name">Amit Joshi</span><span class="feedback-text">Used for part load. Very cost-effective.</span></div>
+          <div class="feedback-card"><span class="feedback-name">Deepak Verma</span><span class="feedback-text">Best choice for Rajasthan–Gujarat routes.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="contact">
+    <div class="card light cta-card need-transport">
+      <div>
+        <h3 class="cta-title">Need to transport?</h3>
+        <p class="cta-sub">Call or message on WhatsApp for quick booking.</p>
+        <div class="hero-cta">
+          <a class="btn btn-accent" href="tel:+916280072125">Call: 6280072125</a>
+          <a class="btn btn-whatsapp" href="https://wa.me/916280072125" target="_blank" rel="noreferrer">WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="map-wrap">
+      <h3 class="map-heading">Find us</h3>
+      <iframe
+        class="embed-map"
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d227748.38!2d75.778885!3d26.912434!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396c4adf4c57e281%3A0xce1c63a0cf22e09!2sJaipur%2C%20Rajasthan!5e0!3m2!1sen!2sin"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Location map">
+      </iframe>
+      <p class="map-note">Rajasthan. Replace this embed URL in <code>templates/index.html</code> with your office/warehouse location from Google Maps (Share → Embed map).</p>
+    </div>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" fill="none">
+  <defs>
+    <linearGradient id="a1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#60a5fa"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="a2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#111827"/>
+      <stop offset="1" stop-color="#1f2937"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000" flood-opacity=".28"/>
+    </filter>
+  </defs>
+
+  <rect x="24" y="28" width="852" height="464" rx="28" fill="url(#a2)" stroke="#2d3a4d" stroke-width="2" filter="url(#shadow)"/>
+
+  <!-- perspective box -->
+  <path d="M148 208 L488 160 L732 240 L390 290 Z" fill="#1a2332" stroke="#2d3a4d" stroke-width="2"/>
+  <path d="M148 208 L390 290 L390 382 L148 296 Z" fill="#162033" stroke="#2d3a4d" stroke-width="2"/>
+  <path d="M390 290 L732 240 L732 334 L390 382 Z" fill="#1f2b3a" stroke="#2d3a4d" stroke-width="2"/>
+
+  <!-- cabin -->
+  <path d="M570 306 L732 268 L812 304 L812 372 L570 414 Z" fill="#233247" stroke="#2d3a4d" stroke-width="2"/>
+  <path d="M650 298 L732 276 L780 300 L700 322 Z" fill="#0b1220" stroke="#2d3a4d" stroke-width="2"/>
+  <path d="M585 338 L640 322 L640 358 L585 374 Z" fill="url(#a1)" opacity=".75"/>
+
+  <!-- chassis -->
+  <path d="M168 396 L390 460 L812 392" stroke="#111827" stroke-width="16" stroke-linecap="round"/>
+  <path d="M168 396 L250 414" stroke="#60a5fa" stroke-width="10" stroke-linecap="round" opacity=".55"/>
+
+  <!-- wheels (front bigger) -->
+  <g>
+    <ellipse cx="262" cy="430" rx="44" ry="36" fill="#0b1220" stroke="#2d3a4d" stroke-width="2"/>
+    <ellipse cx="262" cy="430" rx="24" ry="18" fill="#111827"/>
+    <ellipse cx="262" cy="430" rx="8" ry="6" fill="#2d3a4d"/>
+  </g>
+  <g>
+    <ellipse cx="502" cy="412" rx="40" ry="32" fill="#0b1220" stroke="#2d3a4d" stroke-width="2"/>
+    <ellipse cx="502" cy="412" rx="22" ry="16" fill="#111827"/>
+    <ellipse cx="502" cy="412" rx="7" ry="5" fill="#2d3a4d"/>
+  </g>
+  <g>
+    <ellipse cx="724" cy="388" rx="42" ry="34" fill="#0b1220" stroke="#2d3a4d" stroke-width="2"/>
+    <ellipse cx="724" cy="388" rx="23" ry="17" fill="#111827"/>
+    <ellipse cx="724" cy="388" rx="7" ry="5" fill="#2d3a4d"/>
+  </g>
+
+  <!-- decorative path -->
+  <path d="M112 144 C270 110, 356 120, 496 176 S748 252, 820 182" stroke="url(#a1)" stroke-width="10" stroke-linecap="round" opacity=".55"/>
+</svg>

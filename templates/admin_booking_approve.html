@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Admin — Approve Booking{% endblock %}
+{% block content %}
+<div class="page-card">
+  <h1 class="page-title">Approve booking</h1>
+  <p class="page-subtitle">Select a driver to assign, then approve. User will see driver name and mobile.</p>
+
+  <div class="card" style="margin-bottom:1.25rem;">
+    <div class="booking-route">{{ booking.pickup_location }} → {{ booking.drop_location }}</div>
+    <div class="booking-meta">₹ {{ "%.2f"|format(booking.price|float) }} · {{ booking.status }}</div>
+  </div>
+
+  <form method="post" action="{{ url_for('admin_approve_booking', booking_id=booking.id) }}" class="form">
+    <div class="form-group">
+      <label for="driver_id">Assign driver (scroll to select)</label>
+      <select id="driver_id" name="driver_id" class="driver-select-scroll" size="8">
+        <option value="">— No driver —</option>
+        {% for d in drivers %}
+        <option value="{{ d.id }}">{{ d.name }} · {{ d.phone }}</option>
+        {% endfor %}
+      </select>
+      <p class="form-note">Select driver from the list above, then click Approve.</p>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Approve & assign</button>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-ghost btn-block" style="text-align:center;">Cancel</a>
+  </form>
+</div>
+{% endblock %}

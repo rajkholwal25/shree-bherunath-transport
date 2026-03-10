@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Bookings — Truck Transport{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Bookings</h1>
+  <p class="page-subtitle">Your transport bookings.</p>
+</div>
+<div class="bookings-section">
+  <div class="card">
+    <h2>Create booking</h2>
+    <form method="post" action="{{ url_for('bookings_page') }}" class="form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="pickup">Pickup location</label>
+          <input type="text" id="pickup" name="pickup_location" required placeholder="e.g. Jaipur" value="{{ request.form.pickup_location or '' }}">
+        </div>
+        <div class="form-group">
+          <label for="drop">Drop location</label>
+          <input type="text" id="drop" name="drop_location" required placeholder="e.g. Delhi" value="{{ request.form.drop_location or '' }}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="price">Price (₹)</label>
+        <input type="number" id="price" name="price" required min="0" step="0.01" placeholder="12000" value="{{ request.form.price or '' }}">
+      </div>
+      <button type="submit" class="btn btn-primary">Create booking</button>
+    </form>
+  </div>
+  <div class="card">
+    <h2>Your bookings</h2>
+    {% if bookings %}
+    <ul class="booking-list">
+      {% for b in bookings %}
+      <li class="booking-item" style="align-items: flex-start; flex-direction: column; gap: 0.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; width:100%;">
+          <span class="booking-route">{{ b.pickup_location }} → {{ b.drop_location }}</span>
+          <span class="booking-meta">₹ {{ "%.2f"|format(b.price|float) }} · <span class="status status-{{ b.status }}">{{ b.status }}</span></span>
+        </div>
+        {% if b.status == 'assigned' and (b.truck_number or b.truck_model) %}
+        <div class="truck-details-booking">
+          <strong>Truck assigned:</strong> {{ b.truck_number or '—' }} · {{ b.truck_model or '—' }} · {{ b.truck_capacity or '—' }}
+        </div>
+        {% endif %}
+        {% if (b.status == 'approved' or b.status == 'assigned') and (b.driver_name or b.driver_phone) %}
+        <div class="driver-details-booking">
+          <strong>Driver:</strong> {{ b.driver_name or '—' }} · {{ b.driver_phone or '—' }}
+        </div>
+        {% endif %}
+        {% if b.status == 'rejected' and b.rejection_reason %}
+        <div class="rejection-reason">
+          <strong>Rejection reason:</strong> {{ b.rejection_reason }}
+        </div>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="empty-state">No bookings yet. Create one above.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

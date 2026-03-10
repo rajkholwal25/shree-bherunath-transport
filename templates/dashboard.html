@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Truck Transport{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Dashboard</h1>
+  <p class="page-subtitle">Hello, {{ user.name or 'User' }}. You’re logged in as <strong>{{ session.role }}</strong>.</p>
+</div>
+<div class="card-grid">
+  <a href="{{ url_for('bookings_page') }}" class="card card-link">
+    <span class="card-icon">📦</span>
+    <h2>Bookings</h2>
+    <p>View and create transport bookings.</p>
+  </a>
+  {% if session.role == 'admin' %}
+  <a href="/api/trucks" class="card card-link" title="API: GET /api/trucks">
+    <span class="card-icon">🚛</span>
+    <h2>Trucks</h2>
+    <p>Manage trucks (API).</p>
+  </a>
+  {% endif %}
+  {% if session.role == 'driver' %}
+  <div class="card">
+    <span class="card-icon">📍</span>
+    <h2>My trips</h2>
+    <p>View assigned trips via API: <code>GET /api/driver/trips</code></p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Admin — Edit Service{% endblock %}
+{% block content %}
+<div class="page-card">
+  <h1 class="page-title">Edit service</h1>
+  <p class="page-subtitle">Update title, description, and icon.</p>
+
+  <form method="post" action="{{ url_for('admin_service_edit', service_id=service.id) }}" class="form">
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input id="title" name="title" required value="{{ service.title }}">
+    </div>
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" name="description" rows="5">{{ service.description or '' }}</textarea>
+    </div>
+    <div class="form-group">
+      <label for="icon">Icon (optional)</label>
+      <input id="icon" name="icon" value="{{ service.icon or '' }}" placeholder="e.g. ✅ or 📦">
+    </div>
+
+    <button class="btn btn-primary btn-block" type="submit">Save changes</button>
+    <a class="btn btn-ghost btn-block" href="{{ url_for('admin_services') }}" style="text-align:center;">Back</a>
+  </form>
+</div>
+{% endblock %}

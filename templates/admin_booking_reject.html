@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Admin — Reject Booking{% endblock %}
+{% block content %}
+<div class="page-card">
+  <h1 class="page-title">Reject booking</h1>
+  <p class="page-subtitle">Give a reason so the user knows why this booking was rejected.</p>
+
+  <div class="card" style="margin-bottom:1.25rem;">
+    <div class="booking-route">{{ booking.pickup_location }} → {{ booking.drop_location }}</div>
+    <div class="booking-meta">₹ {{ "%.2f"|format(booking.price|float) }} · {{ booking.status }}</div>
+  </div>
+
+  <form method="post" action="{{ url_for('admin_reject_booking', booking_id=booking.id) }}" class="form">
+    <div class="form-group">
+      <label for="rejection_reason">Reason for rejection (user will see this)</label>
+      <textarea id="rejection_reason" name="rejection_reason" rows="3" placeholder="e.g. No trucks available for this route currently."></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Reject booking</button>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-ghost btn-block" style="text-align:center;">Cancel</a>
+  </form>
+</div>
+{% endblock %}

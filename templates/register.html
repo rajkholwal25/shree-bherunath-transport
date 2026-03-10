@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Register — Truck Transport{% endblock %}
+{% block content %}
+<div class="page-card">
+  <h1 class="page-title">Create account</h1>
+  <p class="page-subtitle">Register to book trucks and manage shipments.</p>
+  <form method="post" action="{{ url_for('register_page') }}" class="form">
+    <div class="form-group">
+      <label for="name">Full name</label>
+      <input type="text" id="name" name="name" required placeholder="Your name" value="{{ request.form.name or '' }}">
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required placeholder="you@example.com" value="{{ request.form.email or '' }}">
+    </div>
+    <div class="form-group">
+      <label for="phone">Phone (optional)</label>
+      <input type="tel" id="phone" name="phone" placeholder="+91 98765 43210" value="{{ request.form.phone or '' }}">
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required placeholder="••••••••" minlength="6">
+    </div>
+    <div class="form-group">
+      <label for="role">I am a</label>
+      <select id="role" name="role">
+        <option value="customer" {{ 'selected' if request.form.role == 'customer' else '' }}>Customer</option>
+        <option value="driver" {{ 'selected' if request.form.role == 'driver' else '' }}>Driver</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Create account</button>
+  </form>
+  <p class="form-footer">Already have an account? <a href="{{ url_for('login_page') }}">Log in</a></p>
+</div>
+{% endblock %}

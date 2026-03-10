@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Admin — Our Services{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Our Services</h1>
+  <p class="page-subtitle">Add, edit, or delete service cards. These appear in the "Our Services" section on the homepage.</p>
+</div>
+
+<div class="bookings-section">
+  <div class="card">
+    <h2>Add service card</h2>
+    <form method="post" action="{{ url_for('admin_services') }}" class="form">
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input id="title" name="title" required placeholder="e.g. Full Truck Load (FTL)">
+      </div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="4" placeholder="Service description..."></textarea>
+      </div>
+      <div class="form-group">
+        <label for="icon">Icon (optional)</label>
+        <input id="icon" name="icon" placeholder="e.g. ✅ or 📦">
+      </div>
+      <button class="btn btn-primary" type="submit">Add service</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>All service cards</h2>
+    {% if services %}
+      <ul class="route-admin-list">
+        {% for s in services %}
+          <li class="route-admin-item">
+            <span class="booking-route">{% if s.icon %}{{ s.icon }} {% endif %}{{ s.title }}</span>
+            <div class="action-row">
+              <a class="btn btn-ghost btn-sm" href="{{ url_for('admin_service_edit', service_id=s.id) }}">Edit</a>
+              <form method="post" action="{{ url_for('admin_service_delete', service_id=s.id) }}">
+                <button class="btn btn-ghost btn-sm" type="submit">Delete</button>
+              </form>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="empty-state">No services yet. Add one above; default cards are shown on the homepage until you add your own.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
