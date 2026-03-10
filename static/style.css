@@ -147,6 +147,40 @@ body {
   margin: 0;
 }
 
+/* Hamburger — hidden on desktop */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  cursor: pointer;
+  color: #0f172a;
+}
+.nav-toggle-bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  margin: 0 auto;
+  transition: transform 0.2s, opacity 0.2s;
+}
+.site-header.nav-open .nav-toggle-bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.site-header.nav-open .nav-toggle-bar:nth-child(2) {
+  opacity: 0;
+}
+.site-header.nav-open .nav-toggle-bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
 /* Buttons */
 .btn {
   display: inline-block;
@@ -309,6 +343,12 @@ body {
   margin: 0.75rem 0 0;
   font-size: 0.85rem;
   color: var(--text-muted);
+}
+
+.input-copy {
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.75rem !important;
 }
 
 /* Forms inside cards */
@@ -940,6 +980,78 @@ body {
   .two-col { grid-template-columns: 1fr; }
   .service-card { grid-template-columns: 1fr; }
   .cta-card { grid-template-columns: 1fr; }
+}
+
+/* Mobile: hamburger nav */
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: flex;
+    order: 2;
+    margin-left: auto;
+  }
+  .header-inner {
+    flex-wrap: wrap;
+  }
+  .nav {
+    display: none;
+    flex-basis: 100%;
+    order: 3;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0.5rem 0 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    margin-top: 0.25rem;
+  }
+  .site-header.nav-open .nav {
+    display: flex;
+  }
+  .nav .nav-link,
+  .nav .nav-form {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.25rem;
+    justify-content: flex-start;
+  }
+  .nav .nav-form .btn {
+    width: 100%;
+    text-align: left;
+  }
+  .logo-text {
+    font-size: 1.1rem;
+  }
+}
+
+/* Touch devices: cards get visible glow so they don't rely on hover */
+@media (hover: none) {
+  .card.light,
+  .card,
+  .truck-card,
+  .route-card,
+  .route-chip,
+  .feedback-card {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(245, 158, 11, 0.15);
+    border-color: rgba(245, 158, 11, 0.25);
+  }
+  .card.light:active,
+  .card:active,
+  .truck-card:active,
+  .route-card:active,
+  .route-chip:active,
+  .feedback-card:active {
+    box-shadow: 0 0 18px rgba(245, 158, 11, 0.4), 0 0 0 2px rgba(245, 158, 11, 0.5);
+    border-color: var(--glow-border);
+    transform: scale(0.99);
+  }
+  .card.light:hover,
+  .card:hover,
+  .truck-card:hover,
+  .route-card:hover,
+  .route-chip:hover,
+  .feedback-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(245, 158, 11, 0.35);
+    border-color: rgba(245, 158, 11, 0.4);
+  }
 }
 
 .empty-state {

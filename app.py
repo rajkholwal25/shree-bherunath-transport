@@ -1,12 +1,22 @@
 """Flask app entry point. Truck / Transport system with Supabase."""
 import os
+import uuid
 from flask import Flask, render_template, redirect, url_for, request, session, flash, jsonify
 from flask_cors import CORS
 
 from config import SECRET_KEY, SUPERADMIN_EMAIL
 from database import close_connection
 from models.admin import get_admin_by_email, verify_admin_password
-from models.user import create_user, get_user_by_email, get_user_by_id, verify_password
+from models.user import (
+    create_user,
+    get_user_by_email,
+    get_user_by_id,
+    verify_password,
+    set_reset_token,
+    get_user_by_reset_token,
+    update_password_and_clear_reset,
+)
+from email_sender import send_reset_email
 from models.booking import (
     get_bookings_by_customer,
     get_all_bookings,
@@ -56,6 +66,17 @@ def admin_required(f):
     return wrapped
 
 
+def _valid_driver_uuid(s):
+    """Return s if it's a valid UUID string, else None. Avoids invalid input for driver_id."""
+    if not s or not s.strip():
+        return None
+    try:
+        uuid.UUID(s.strip())
+        return s.strip()
+    except (ValueError, TypeError):
+        return None
+
+
 def create_app():
     app = Flask(__name__, template_folder="templates", static_folder="static")
     app.config["SECRET_KEY"] = SECRET_KEY
@@ -68,6 +89,8 @@ def create_app():
             cur.execute("ALTER TABLE trucks ADD COLUMN IF NOT EXISTS image_url TEXT;")
             cur.execute("ALTER TABLE bookings ADD COLUMN IF NOT EXISTS rejection_reason TEXT;")
             cur.execute("ALTER TABLE bookings ADD COLUMN IF NOT EXISTS driver_id UUID;")
+            cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token TEXT;")
+            cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_expires TIMESTAMPTZ;")
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS routes (
                     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -148,6 +171,52 @@ def create_app():
                 return redirect(url_for("admin_dashboard"))
             return redirect(url_for("dashboard"))
         return render_template("login.html")
+
+    @app.route("/forgot-password", methods=["GET", "POST"])
+    def forgot_password_page():
+        if request.method == "POST":
+            email = (request.form.get("email") or "").strip().lower()
+            if not email:
+                flash("Please enter your email.", "error")
+                return redirect(url_for("forgot_password_page"))
+            user, token = set_reset_token(email)
+            if user and token:
+                reset_url = url_for("reset_password_page", token=token, _external=True)
+                email_sent = send_reset_email(email, reset_url, user.get("name") or "")
+                if email_sent:
+                    flash("If an account exists for this email, we sent a reset link. Check your inbox (and spam).", "success")
+                    return render_template("forgot_password_check_email.html", email=email)
+                else:
+                    flash("Email not configured. Use the link below to reset. Link expires in 2 hours.", "info")
+                    return render_template("forgot_password_done.html", reset_url=reset_url, email=email)
+            else:
+                flash("If an account exists for this email, you would receive a reset link. Check your email or try again.", "info")
+                return redirect(url_for("forgot_password_page"))
+        return render_template("forgot_password.html")
+
+    @app.route("/reset-password", methods=["GET", "POST"])
+    def reset_password_page():
+        token = request.args.get("token") or (request.form.get("token") or "").strip()
+        if not token:
+            flash("Invalid or missing reset link.", "error")
+            return redirect(url_for("login_page"))
+        user = get_user_by_reset_token(token)
+        if not user:
+            flash("This reset link is invalid or has expired. Request a new one.", "error")
+            return redirect(url_for("forgot_password_page"))
+        if request.method == "POST":
+            new_password = request.form.get("password") or ""
+            confirm = request.form.get("confirm_password") or ""
+            if len(new_password) < 6:
+                flash("Password must be at least 6 characters.", "error")
+                return render_template("reset_password.html", token=token)
+            if new_password != confirm:
+                flash("Passwords do not match.", "error")
+                return render_template("reset_password.html", token=token)
+            update_password_and_clear_reset(user["id"], new_password)
+            flash("Password updated. You can log in with your new password.", "success")
+            return redirect(url_for("login_page"))
+        return render_template("reset_password.html", token=token)
 
     @app.route("/register", methods=["GET", "POST"])
     def register_page():
@@ -344,7 +413,7 @@ def create_app():
             model = (request.form.get("model") or "").strip()
             capacity = (request.form.get("capacity") or "").strip()
             image_url = (request.form.get("image_url") or "").strip() or None
-            driver_id = (request.form.get("driver_id") or "").strip() or None
+            driver_id = _valid_driver_uuid(request.form.get("driver_id") or "")
             if not truck_number or not model or not capacity:
                 flash("Truck number, model, and capacity are required.", "error")
                 return redirect(url_for("admin_trucks"))
@@ -356,7 +425,8 @@ def create_app():
             return redirect(url_for("admin_trucks"))
 
         trucks = get_all_trucks()
-        return render_template("admin_trucks.html", trucks=trucks)
+        drivers = get_all_drivers()
+        return render_template("admin_trucks.html", trucks=trucks, drivers=drivers)
 
     @app.route("/admin/trucks/<truck_id>/edit", methods=["GET", "POST"])
     @admin_required
@@ -370,7 +440,7 @@ def create_app():
             model = (request.form.get("model") or "").strip()
             capacity = (request.form.get("capacity") or "").strip()
             image_url = (request.form.get("image_url") or "").strip()
-            driver_id = (request.form.get("driver_id") or "").strip()
+            driver_id = _valid_driver_uuid(request.form.get("driver_id") or "")
             if not truck_number or not model or not capacity:
                 flash("Truck number, model, and capacity are required.", "error")
                 return redirect(url_for("admin_truck_edit", truck_id=truck_id))
@@ -379,7 +449,7 @@ def create_app():
                 truck_number=truck_number,
                 model=model,
                 capacity=capacity,
-                driver_id=driver_id or None,
+                driver_id=driver_id,
                 image_url=image_url or None,
             )
             if updated:
@@ -387,7 +457,8 @@ def create_app():
             else:
                 flash("Failed to update truck.", "error")
             return redirect(url_for("admin_trucks"))
-        return render_template("admin_truck_edit.html", truck=truck)
+        drivers = get_all_drivers()
+        return render_template("admin_truck_edit.html", truck=truck, drivers=drivers)
 
     @app.route("/admin/trucks/<truck_id>/delete", methods=["POST"])
     @admin_required

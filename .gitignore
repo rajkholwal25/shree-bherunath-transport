@@ -2,6 +2,7 @@
 .env
 .env.local
 .env.*.local
+env-for-render.txt
 
 # Python
 __pycache__/

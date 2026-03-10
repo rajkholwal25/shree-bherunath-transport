@@ -1,4 +1,6 @@
 """User model and helpers. Uses users table (id, name, email, phone, password, created_at). Role column optional."""
+import secrets
+from datetime import datetime, timedelta, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import get_cursor
 
@@ -54,3 +56,45 @@ def get_user_by_id(user_id):
 def verify_password(user, password):
     """Check plain password against stored hash."""
     return user and check_password_hash(user.get("password") or "", password)
+
+
+def set_reset_token(email, expires_hours=2):
+    """Set reset_token and reset_expires for user by email. Returns (user, token) or (None, None)."""
+    user = get_user_by_email(email)
+    if not user:
+        return None, None
+    token = secrets.token_urlsafe(32)
+    expires = datetime.now(timezone.utc) + timedelta(hours=expires_hours)
+    with get_cursor() as cur:
+        cur.execute(
+            "UPDATE users SET reset_token = %s, reset_expires = %s WHERE id = %s",
+            (token, expires, user["id"]),
+        )
+        cur.connection.commit()
+    return user, token
+
+
+def get_user_by_reset_token(token):
+    """Get user by valid reset token (not expired). Returns None if invalid."""
+    if not token or not token.strip():
+        return None
+    with get_cursor() as cur:
+        cur.execute(
+            "SELECT id, name, email, phone, created_at FROM users WHERE reset_token = %s AND reset_expires > NOW()",
+            (token.strip(),),
+        )
+        row = cur.fetchone()
+        if not row:
+            return None
+        return dict(row)
+
+
+def update_password_and_clear_reset(user_id, new_password):
+    """Set new password and clear reset_token/reset_expires for user."""
+    hashed = generate_password_hash(new_password)
+    with get_cursor() as cur:
+        cur.execute(
+            "UPDATE users SET password = %s, reset_token = NULL, reset_expires = NULL WHERE id = %s",
+            (hashed, user_id),
+        )
+        cur.connection.commit()

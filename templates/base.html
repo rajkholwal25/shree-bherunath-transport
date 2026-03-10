@@ -8,6 +8,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.nav a[href]').forEach(function(a) {
+        a.addEventListener('click', function() {
+          document.querySelector('.site-header').classList.remove('nav-open');
+        });
+      });
+    });
+  </script>
 </head>
 <body>
   <header class="site-header">
@@ -18,7 +27,12 @@
         </span>
         <span class="logo-text">Shree Bherunath Transport</span>
       </a>
-      <nav class="nav">
+      <button type="button" class="nav-toggle" aria-label="Open menu" onclick="document.querySelector('.site-header').classList.toggle('nav-open')">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <nav class="nav" id="main-nav">
         <a href="{{ url_for('index') }}" class="nav-link">Home</a>
         {% if session.get('role') != 'admin' %}
         <a href="{{ url_for('trucks_page') }}" class="nav-link">Available Trucks</a>
