@@ -182,16 +182,12 @@ def create_app():
             user, token = set_reset_token(email)
             if user and token:
                 reset_url = url_for("reset_password_page", token=token, _external=True)
-                email_sent = send_reset_email(email, reset_url, user.get("name") or "")
-                if email_sent:
-                    flash("If an account exists for this email, we sent a reset link. Check your inbox (and spam).", "success")
-                    return render_template("forgot_password_check_email.html", email=email)
-                else:
-                    flash("Email not configured. Use the link below to reset. Link expires in 2 hours.", "info")
-                    return render_template("forgot_password_done.html", reset_url=reset_url, email=email)
-            else:
-                flash("If an account exists for this email, you would receive a reset link. Check your email or try again.", "info")
-                return redirect(url_for("forgot_password_page"))
+                send_reset_email(email, reset_url, user.get("name") or "")
+            flash(
+                "If an account exists for this email, we sent a reset link. Check your inbox (and spam).",
+                "info",
+            )
+            return render_template("forgot_password_check_email.html", email=email)
         return render_template("forgot_password.html")
 
     @app.route("/reset-password", methods=["GET", "POST"])
